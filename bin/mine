@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+if test -n "${1-}"; then
+    NUM_BLOCKS=$1
+else
+    NUM_BLOCKS=1
+fi
+
+ADDRESS=`$DIR/bitcoin-cli getnewaddress | tr '\n' ' '`
+
+echo Mining to: $ADDRESS
+
+$DIR/bitcoin-cli generatetoaddress $NUM_BLOCKS $ADDRESS
+
+echo Mined

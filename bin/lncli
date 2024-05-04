@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker exec bolt12-playground-$1-1 lncli --network regtest "${@:2}" || echo "Usage: lncli {NodeName, e.g. lnd1} {lncli command, e.g. getinfo}"

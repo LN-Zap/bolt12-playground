@@ -1,0 +1,60 @@
+services:
+
+  bitcoind:
+    image: lncm/bitcoind:v25.1
+    restart: unless-stopped
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.1
+    volumes:
+      - "bitcoind:/data/.bitcoin"
+      - "./conf/bitcoind/bitcoin.conf:/data/.bitcoin/bitcoin.conf"
+
+  lnd1:
+    build: ./docker/lnd
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.2
+    command: --externalip=172.30.1.2 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd1
+    volumes:
+      - "lnd1:/root/.lnd"
+      - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
+
+  lndk1:
+    build: ./docker/lndk
+    restart: unless-stopped
+    depends_on:
+      - lnd1
+    command: --address=https://lnd1:10009 --cert=/root/.lnd/tls.cert --macaroon=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+    volumes:
+      - "lnd1:/root/.lnd"
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.3
+
+  lnd2:
+    build: ./docker/lnd
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.20
+    command: --externalip=172.30.1.20 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2
+    volumes:
+      - "lnd2:/root/.lnd"
+      - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
+volumes:
+  bitcoind:
+  lnd1:
+  lnd2: 
+
+networks:
+  testing_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16

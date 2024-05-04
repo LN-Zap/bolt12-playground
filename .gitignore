@@ -1,0 +1,10 @@
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore common IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/

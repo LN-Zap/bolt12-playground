@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker exec bolt12-playground-bitcoind-1 bitcoin-cli -rpcport=43782 -rpcuser=user -rpcpassword=pass -regtest "$@"
