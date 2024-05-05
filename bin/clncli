@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker exec bolt12-playground-cln1-1 lightning-cli --regtest "${@:1}" || echo "Usage: clncli {clncli command, e.g. getinfo}"

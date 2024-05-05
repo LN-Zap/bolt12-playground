@@ -18,10 +18,22 @@ docker compose up
 ./scripts/init.sh
 ```
 
+**Generate a bolt 12 offer:**
+
+```sh
+./bin/clncli offer 10000 "test offer from cln"
+```
+
 **Decode a bolt 12 offer:**
 
 ```sh
-./bin/lndk-cli lndk1 decode lno1pqqnyzsmx5cx6umpwssx6atvw35j6ut4v9h8g6t50ysx7enxv4epyrmjw4ehgcm0wfczucm0d5hxzag5qqtzzq3lxgva5qlw9xsjmeqs0ek9cdj0vpec9ur972l7mywa66u3q7dlhs
+./bin/lndk-cli lndk1 decode [BOLT12_OFFER]
+```
+
+**Pay to bolt 12 offer:**
+
+```sh
+./bin/lndk-cli lndk1 pay-offer [BOLT12_OFFER]
 ```
 
 **Clean everything:**

@@ -1,0 +1,11 @@
+network=regtest
+
+bitcoin-rpcconnect=bitcoind
+bitcoin-rpcport=43782
+bitcoin-rpcuser=user
+bitcoin-rpcpassword=pass
+
+log-level=debug
+
+experimental-offers
+experimental-onion-messages

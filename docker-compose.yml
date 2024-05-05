@@ -1,7 +1,7 @@
 services:
 
   bitcoind:
-    image: lncm/bitcoind:v25.1
+    image: lncm/bitcoind:v27.0
     restart: unless-stopped
     networks:
       testing_net:
@@ -29,6 +29,8 @@ services:
     depends_on:
       - lnd1
     command: --address=https://lnd1:10009 --cert=/root/.lnd/tls.cert --macaroon=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+    environment:
+      - RUST_BACKTRACE=1
     volumes:
       - "lnd1:/root/.lnd"
     networks:
@@ -47,10 +49,25 @@ services:
     volumes:
       - "lnd2:/root/.lnd"
       - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
+
+  cln1:
+    image: elementsproject/lightningd:v23.11.2-arm64v8
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.30
+    command: --network=regtest --addr=172.30.1.30:9735
+    volumes:
+      - "cln1:/root/.lightning"
+      - "./conf/cln/config:/root/.lightning/config"
+
 volumes:
   bitcoind:
   lnd1:
-  lnd2: 
+  lnd2:
+  cln1:
 
 networks:
   testing_net:
