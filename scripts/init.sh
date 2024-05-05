@@ -14,6 +14,10 @@ lnd2() {
   $DIR/../bin/lncli lnd2 $@
 }
 
+cln1() {
+  $DIR/../bin/clncli $@
+}
+
 waitFor() {
   until $@; do
     >&2 echo "$@ unavailable - waiting..."
@@ -47,6 +51,9 @@ generateAddresses() {
 
   LND2_ADDRESS=$(lnd2 newaddress p2wkh | jq -r .address)
   echo LND2_ADDRESS: $LND2_ADDRESS
+
+  CLN1_ADDRESS=$(cln1 newaddr | jq -r .bech32)
+  echo CLN1_ADDRESS: $CLN1_ADDRESS
 }
 
 getNodeInfo() {
@@ -63,11 +70,19 @@ getNodeInfo() {
 
   LND2_PUBKEY=$(echo ${LND2_NODE_INFO} | jq -r .identity_pubkey)
   echo LND2_PUBKEY: $LND2_PUBKEY
+
+  CLN1_NODE_INFO=$(cln1 getinfo)
+  CLN1_PUBKEY=$(echo ${CLN1_NODE_INFO} | jq -r .id)
+  CLN1_IP_ADDRESS=$(echo ${CLN1_NODE_INFO} | jq -r '.binding[0].address')
+  CLN1_PORT=$(echo ${CLN1_NODE_INFO} | jq -r '.binding[0].port')
+  CLN1_NODE_URI="${CLN1_PUBKEY}@${CLN1_IP_ADDRESS}:${CLN1_PORT}"
+  echo CLN1_NODE_URI: $CLN1_NODE_URI
+  echo CLN1_PUBKEY: $CLN1_PUBKEY
 }
 
 sendFundingTransaction() {
   echo creating raw tx...
-  local addresses=($LND1_ADDRESS $LND2_ADDRESS)
+  local addresses=($LND1_ADDRESS $LND2_ADDRESS $CLN1_ADDRESS)
   local outputs=$(jq -nc --arg amount 1 '$ARGS.positional | reduce .[] as $address ({}; . + {($address) : ($amount | tonumber)})' --args "${addresses[@]}")
   RAW_TX=$(bitcoind createrawtransaction "[]" $outputs)
   echo RAW_TX: $RAW_TX
@@ -95,9 +110,13 @@ fundNodes() {
 }
 
 openChannel() {
-  # Open a channel between the two nodes.
-  waitFor lnd1 connect $LND2_NODE_URI || true
-  waitFor lnd1 openchannel $LND2_PUBKEY 100000000
+  # Open a channel between lnd1 and lnd2.
+  waitFor lnd1 connect $LND2_NODE_URI
+  waitFor lnd1 openchannel $LND2_PUBKEY 10000000
+
+  # Open a channel between lnd1 and cln1.
+  waitFor lnd1 connect $CLN1_NODE_URI
+  waitFor lnd1 openchannel $CLN1_PUBKEY 10000000
 
   # Generate some blocks to confirm the channel.
   mineBlocks $BITCOIN_ADDRESS 6
@@ -107,6 +126,7 @@ waitForNodes() {
   waitFor bitcoind getnetworkinfo
   waitFor lnd1 getinfo
   waitFor lnd2 getinfo
+  waitFor cln1 getinfo
 }
 
 main() {
