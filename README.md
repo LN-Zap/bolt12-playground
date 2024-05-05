@@ -1,10 +1,10 @@
 # Bolt 12 Playground
 
-This Bolt 12 Playground provides a docker stack that comprises of bitcoind, [LND](https://github.com/lightningnetwork/lnd), [CLN](https://github.com/ElementsProject/lightning) and [LNDK](https://github.com/lndk-org/lndk). It connects everything together, initializes wallets, and creates channels between the nodes.
+This Bolt 12 Playground provides a docker stack that comprises of bitcoind, [LND](https://github.com/lightningnetwork/lnd), [CLN](https://github.com/ElementsProject/lightning), [Eclair](https://github.com/ACINQ/eclair) and [LNDK](https://github.com/lndk-org/lndk). It connects everything together, initializes wallets, and creates channels between the nodes.
 
-You can use this to get familiar with [Bolt 12](https://bolt12.org/) and [LNDK](https://github.com/lndk-org/lndk).
+You can use this to get familiar with [Bolt 12](https://bolt12.org/).
 
-## Usage
+## Setup
 
 **Start nodes:**
 
@@ -19,7 +19,9 @@ docker compose up
 ```
 
 
-### Paying to an Eclair node
+## Paying to an Eclair node
+
+This is the only working scenario at the moment.
 
 **Generate a bolt 12 offer:**
 
@@ -40,7 +42,9 @@ docker compose up
 ```
 
 
-### Paying to a CLN node
+## Paying to a CLN node
+
+This is not working at the moment.
 
 **Generate a bolt 12 offer:**
 
@@ -61,7 +65,7 @@ docker compose up
 ```
 
 
-### Clean up
+## Clean up
 
 **Clean everything:**
 ```sh
