@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+docker exec bolt12-playground-eclair1-1 eclair-cli -p pass "$@"
