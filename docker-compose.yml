@@ -37,19 +37,6 @@ services:
       testing_net:
         ipv4_address: 172.30.1.3
 
-  lnd2:
-    build: ./docker/lnd
-    restart: unless-stopped
-    depends_on:
-      - bitcoind
-    networks:
-      testing_net:
-        ipv4_address: 172.30.1.20
-    command: --externalip=172.30.1.20 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2
-    volumes:
-      - "lnd2:/root/.lnd"
-      - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
-
   cln1:
     image: elementsproject/lightningd:v23.11.2-arm64v8
     restart: unless-stopped
@@ -58,7 +45,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=172.30.1.30:9735
+    command: --network=regtest --addr=cln1:9735
     volumes:
       - "cln1:/root/.lightning"
       - "./conf/cln/config:/root/.lightning/config"
@@ -68,6 +55,7 @@ volumes:
   lnd1:
   lnd2:
   cln1:
+  # eclair1:
 
 networks:
   testing_net:

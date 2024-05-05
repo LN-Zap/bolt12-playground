@@ -27,13 +27,13 @@ docker compose up
 **Decode a bolt 12 offer:**
 
 ```sh
-./bin/lndk-cli lndk1 decode [BOLT12_OFFER]
+./bin/lndk-cli decode [BOLT12_OFFER]
 ```
 
 **Pay to bolt 12 offer:**
 
 ```sh
-./bin/lndk-cli lndk1 pay-offer [BOLT12_OFFER]
+./bin/lndk-cli pay-offer [BOLT12_OFFER]
 ```
 
 **Clean everything:**

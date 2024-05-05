@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-docker exec bolt12-playground-$1-1 lndk-cli "${@:2}" || echo "Usage: lndk-cli {NodeName, e.g. lndk1} {lndk command, e.g. decode}"
+docker exec bolt12-playground-lndk1-1 lndk-cli --address=https://lnd1:10009 "${@:1}" || echo "Usage: lndk-cli {lndk command, e.g. decode}"
