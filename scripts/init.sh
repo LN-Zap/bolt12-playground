@@ -105,8 +105,6 @@ fundNodes() {
   sendFundingTransaction
   sendFundingTransaction
 
-  sleep 1
-
   # Generate some blocks to confirm the transactions.
   mineBlocks $BITCOIN_ADDRESS 10
 }
@@ -116,8 +114,6 @@ openChannel() {
   waitFor lnd1 connect $CLN1_NODE_URI
   waitFor lnd1 openchannel $CLN1_PUBKEY 10000000 5000000
 
-  sleep 3
-
   # Generate some blocks to confirm the channel.
   mineBlocks $BITCOIN_ADDRESS 10
 
@@ -125,10 +121,16 @@ openChannel() {
   waitFor lnd1 connect $ECLAIR1_NODE_URI
   waitFor lnd1 openchannel $ECLAIR1_PUBKEY 10000000 5000000
 
-  sleep 3
-
   # Generate some blocks to confirm the channel.
   mineBlocks $BITCOIN_ADDRESS 10
+}
+
+forceEclairSync() {
+  eclair1 stop
+  sleep 30
+  mineBlocks $BITCOIN_ADDRESS 1
+  sleep 30
+  mineBlocks $BITCOIN_ADDRESS 1
 }
 
 waitForNodes() {
@@ -146,6 +148,7 @@ main() {
   initBitcoinChain
   fundNodes
   openChannel
+  forceEclairSync
 }
 
 main
