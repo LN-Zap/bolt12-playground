@@ -1,6 +1,6 @@
 # Bolt 12 Playground
 
-This Bolt 12 Playground provides a docker stack that comprises of bitcoind, 2x lnd nodes and an lndk client. It connects everything together, initializes the wallets, and creates a channel between the two nodes.
+This Bolt 12 Playground provides a docker stack that comprises of bitcoind, [LND](https://github.com/lightningnetwork/lnd), [CLN](https://github.com/ElementsProject/lightning) and [LNDK](https://github.com/lndk-org/lndk). It connects everything together, initializes wallets, and creates channels between the nodes.
 
 You can use this to get familiar with [Bolt 12](https://bolt12.org/) and [LNDK](https://github.com/lndk-org/lndk).
 
