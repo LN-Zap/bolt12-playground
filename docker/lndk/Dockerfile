@@ -4,7 +4,7 @@
 FROM rust:1.78-bookworm AS builder
 
 # References for lndk
-ARG LNDK_REF=2ee03e3433e20ca824a1f838adab4bb19ab277a6
+ARG LNDK_REF=b2586d77ad527b7469c680823da31ae55c489a43
 
 # Add utils
 RUN apt-get update \
@@ -41,5 +41,8 @@ RUN apt-get update \
 # Copy the compiled binaries from the builder image
 COPY --from=builder /bin/lndk /usr/local/bin/
 COPY --from=builder /bin/lndk-cli /usr/local/bin/
+
+# Expose grpc port
+EXPOSE 7000
 
 ENTRYPOINT ["lndk"]
