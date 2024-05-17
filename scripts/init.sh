@@ -125,14 +125,6 @@ openChannel() {
   mineBlocks $BITCOIN_ADDRESS 10
 }
 
-forceEclairSync() {
-  eclair1 stop
-  sleep 30
-  mineBlocks $BITCOIN_ADDRESS 1
-  sleep 30
-  mineBlocks $BITCOIN_ADDRESS 1
-}
-
 waitForNodes() {
   waitFor bitcoind getnetworkinfo
   waitFor lnd1 getinfo
@@ -148,7 +140,6 @@ main() {
   initBitcoinChain
   fundNodes
   openChannel
-  forceEclairSync
 }
 
 main

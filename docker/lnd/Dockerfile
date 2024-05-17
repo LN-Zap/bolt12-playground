@@ -4,7 +4,7 @@
 FROM golang:1.21.4-bookworm AS builder
 
 # References for lnd
-ARG LNDE_REF=v0.18.0-beta.rc1
+ARG LNDE_REF=v0.18.0-beta.rc2
 
 # Set the working directory in the Docker image
 WORKDIR /usr/src
