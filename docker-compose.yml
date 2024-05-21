@@ -59,10 +59,11 @@ services:
       testing_net:
         ipv4_address: 172.30.1.31
     environment:
-      - JAVA_OPTS=-Declair.printToConsole
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
     volumes:
       - "eclair1:/data"
       - "./conf/eclair/eclair.conf:/data/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
 volumes:
   bitcoind:
