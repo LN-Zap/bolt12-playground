@@ -38,14 +38,14 @@ services:
         ipv4_address: 172.30.1.3
 
   cln1:
-    image: elementsproject/lightningd:v23.11.2-arm64v8
+    image: cyphernode/clightning:v23.11.2
     restart: unless-stopped
     depends_on:
       - bitcoind
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=cln1:9735
+    command: lightningd --network=regtest --addr=cln1:9735
     volumes:
       - "cln1:/root/.lightning"
       - "./conf/cln/config:/root/.lightning/config"
