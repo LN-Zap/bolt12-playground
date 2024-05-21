@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <withJansi>false</withJansi>
+        <encoder>
+            <pattern>%yellow(${HOSTNAME} %d) %highlight(%-5level) %replace(%logger{24}){'\$.*',''}%X{category}%X{nodeId}%X{channelId}%X{paymentHash}%.-11X{parentPaymentId}%.-11X{paymentId}%.-11X{txPublishId} - %msg%ex{12}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${eclair.datadir:-${user.home}/.eclair}/eclair.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${eclair.datadir:-${user.home}/.eclair}/eclair.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 90 days' worth of history capped at 5 GB total size -->
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5level %replace(%logger{24}){'\$.*',''}%X{category}%X{nodeId}%X{channelId}%X{paymentHash}%.-11X{parentPaymentId}%.-11X{paymentId}%.-11X{txPublishId} - %msg%ex{24}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_NOTIFICATIONS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${eclair.datadir:-${user.home}/.eclair}/notifications.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${eclair.datadir:-${user.home}/.eclair}/notifications.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 30 days' worth of history capped at 1 GB total size -->
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d %-5level- %msg%ex{24}%n</pattern>
+        </encoder>
+    </appender>
+
+    <if condition='isDefined("eclair.printToConsole")'>
+        <then>
+            <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d %-5level %replace(%logger{24}){'\$.*',''}%X{category}%X{nodeId}%X{channelId}%X{paymentHash}%.-11X{parentPaymentId}%.-11X{paymentId}%.-11X{txPublishId} - %msg%ex{24}%n</pattern>
+                </encoder>
+            </appender>
+            <root>
+                <appender-ref ref="CONSOLE"/>
+            </root>
+        </then>
+    </if>
+
+    <!-- This logger contains important notifications for node operators. -->
+    <logger level="INFO" name="notifications" additivity="false">
+        <appender-ref ref="ROLLING_NOTIFICATIONS"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="ROLLING"/>
+    </root>
+
+</configuration>
