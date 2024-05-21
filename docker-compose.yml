@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
     depends_on:
       - lnd1
-    command: --address=https://lnd1:10009 --cert=/root/.lnd/tls.cert --macaroon=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+    command: --address=https://lnd1:10009 --cert=/root/.lnd/tls.cert --macaroon=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace
     environment:
       - RUST_BACKTRACE=1
     volumes:
