@@ -1,7 +1,7 @@
 #################
 # Builder image #
 #################
-FROM maven:3.8.6-openjdk-11-slim AS BUILD
+FROM maven:3.8.6-openjdk-11-slim AS builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -10,13 +10,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # References for eclair
-ARG ECLAIR_REF=c4934930aa2447d66d1e364b252d6aafc5968cd5
+ARG ECLAIR_REF=b73a009a1d7d7ea3a158776cd233512b9a538550
 ARG ECLAIR_PLUGINS_REF=cdc26dda96774fdc3b54075df078587574891fb7
 
 WORKDIR /usr/src/eclair
 RUN git clone https://github.com/ACINQ/eclair.git . \
     && git reset --hard ${ECLAIR_REF}
-RUN mvn install -DskipTests
+RUN mvn install -pl eclair-node -am -DskipTests -Dgit.commit.id=notag -Dgit.commit.id.abbrev=notag
 
 WORKDIR /usr/src/eclair-plugins
 RUN git clone https://github.com/ACINQ/eclair-plugins.git . \
@@ -27,8 +27,8 @@ RUN mvn package -DskipTests
 # ###############
 # # final image #
 # ###############
-FROM openjdk:11.0.4-jre-slim
-WORKDIR /app
+FROM openjdk:11.0.16-jre-slim-bullseye
+WORKDIR /opt
 
 # Add utils
 RUN apt-get update \
@@ -38,15 +38,15 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # copy and install eclair-cli executable
-COPY --from=BUILD /usr/src/eclair/eclair-core/eclair-cli .
+COPY --from=builder /usr/src/eclair/eclair-core/eclair-cli .
 RUN chmod +x eclair-cli && mv eclair-cli /sbin/eclair-cli
 
 # we only need the eclair-node.zip to run
-COPY --from=BUILD /usr/src/eclair/eclair-node/target/eclair-node-*.zip ./eclair-node.zip
+COPY --from=builder /usr/src/eclair/eclair-node/target/eclair-node-*.zip ./eclair-node.zip
 RUN unzip eclair-node.zip && mv eclair-node-* eclair-node && chmod +x eclair-node/bin/eclair-node.sh
 
 # copy and install bolt12-tip-jar plugin
-COPY --from=BUILD /usr/src/eclair-plugins/bolt12-tip-jar/target/bolt12-tip-jar-0.10.1-SNAPSHOT.jar .
+COPY --from=builder /usr/src/eclair-plugins/bolt12-tip-jar/target/bolt12-tip-jar-0.10.1-SNAPSHOT.jar .
 
 ENV ECLAIR_DATADIR=/data
 ENV JAVA_OPTS=
