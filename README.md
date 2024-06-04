@@ -91,7 +91,7 @@ This command displays a list of all commands that you can issue against the `ecl
 
 ### Paying to an Eclair node that is two hops away
 
-**Generate a bolt 12 offeron eclair2:**
+**Generate a bolt 12 offer on eclair2:**
 
 ```sh
 ./bin/eclair-cli eclair2 tipjarshowoffer
@@ -111,7 +111,7 @@ This command displays a list of all commands that you can issue against the `ecl
 **Generate a bolt 12 offer:**
 
 ```sh
-./bin/lightning-cli cln1 offer 10000 "test offer from cln"
+./bin/lightning-cli cln1 offer 1000 "test offer from cln"
 ```
 
 **Pay to bolt 12 offer:**

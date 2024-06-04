@@ -87,8 +87,8 @@ getNodeInfo() {
 
   CLN1_NODE_INFO=$(cln1 getinfo)
   CLN1_PUBKEY=$(echo ${CLN1_NODE_INFO} | jq -r .id)
-  CLN1_IP_ADDRESS=$(echo ${CLN1_NODE_INFO} | jq -r '.binding[0].address')
-  CLN1_PORT=$(echo ${CLN1_NODE_INFO} | jq -r '.binding[0].port')
+  CLN1_IP_ADDRESS=$(echo ${CLN1_NODE_INFO} | jq -r '.address[0].address')
+  CLN1_PORT=$(echo ${CLN1_NODE_INFO} | jq -r '.address[0].port')
   CLN1_NODE_URI="${CLN1_PUBKEY}@${CLN1_IP_ADDRESS}:${CLN1_PORT}"
   echo CLN1_PUBKEY: $CLN1_PUBKEY
   echo CLN1_NODE_URI: $CLN1_NODE_URI
@@ -110,8 +110,8 @@ getNodeInfo() {
 
   CLN2_NODE_INFO=$(cln2 getinfo)
   CLN2_PUBKEY=$(echo ${CLN2_NODE_INFO} | jq -r .id)
-  CLN2_IP_ADDRESS=$(echo ${CLN2_NODE_INFO} | jq -r '.binding[0].address')
-  CLN2_PORT=$(echo ${CLN2_NODE_INFO} | jq -r '.binding[0].port')
+  CLN2_IP_ADDRESS=$(echo ${CLN2_NODE_INFO} | jq -r '.address[0].address')
+  CLN2_PORT=$(echo ${CLN2_NODE_INFO} | jq -r '.address[0].port')
   CLN2_NODE_URI="${CLN2_PUBKEY}@${CLN2_IP_ADDRESS}:${CLN2_PORT}"
   echo CLN2_PUBKEY: $CLN2_PUBKEY
   echo CLN2_NODE_URI: $CLN2_NODE_URI
