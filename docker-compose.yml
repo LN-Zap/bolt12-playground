@@ -28,24 +28,25 @@ services:
     restart: unless-stopped
     depends_on:
       - lnd1
-    command: --address=https://lnd1:10009 --cert=/root/.lnd/tls.cert --macaroon=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace
+    command: --address=https://lnd1:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace
     environment:
       - RUST_BACKTRACE=1
     volumes:
       - "lnd1:/root/.lnd"
+      - "lndk1:/root/.lndk"
     networks:
       testing_net:
         ipv4_address: 172.30.1.3
 
   cln1:
-    image: lnzap/lightningd:24.05rc1
+    image: elementsproject/lightningd:v24.02
     restart: unless-stopped
     depends_on:
       - bitcoind
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=172.30.1.30:9735
+    command: --network=regtest --addr=cln1 --addr=0.0.0.0:9735
     volumes:
       - "cln1:/root/.lightning"
       - "bitcoind:/root/.lightning/bitcoin"
@@ -63,14 +64,76 @@ services:
       - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
     volumes:
       - "eclair1:/data"
-      - "./conf/eclair/eclair.conf:/data/eclair.conf"
+      - "./conf/eclair/eclair1.conf:/data/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+
+  lnd2:
+    build: ./docker/lnd
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.2.1
+    command: --externalip=172.30.2.1 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd2
+    volumes:
+      - "lnd2:/root/.lnd"
+      - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
+
+  lndk2:
+    build: ./docker/lndk
+    restart: unless-stopped
+    depends_on:
+      - lnd2
+    command: --address=https://lnd2:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace
+    environment:
+      - RUST_BACKTRACE=1
+    volumes:
+      - "lnd2:/root/.lnd"
+      - "lndk2:/root/.lndk"
+    networks:
+      testing_net:
+        ipv4_address: 172.30.2.2
+
+  cln2:
+    image: elementsproject/lightningd:v24.02
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.2.30
+    command: --network=regtest --addr=cln2 --addr=0.0.0.0:9735
+    volumes:
+      - "cln2:/root/.lightning"
+      - "bitcoind:/root/.lightning/bitcoin"
+      - "./conf/cln/config:/root/.lightning/config"
+
+  eclair2:
+    build: ./docker/eclair
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.2.31
+    environment:
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+    volumes:
+      - "eclair2:/data"
+      - "./conf/eclair/eclair2.conf:/data/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
 volumes:
   bitcoind:
   lnd1:
+  lndk1:
   cln1:
   eclair1:
+  lnd2:
+  lndk2:
+  cln2:
+  eclair2:
 
 networks:
   testing_net:

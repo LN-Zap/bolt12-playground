@@ -7,15 +7,27 @@ bitcoind() {
 }
 
 lnd1() {
-  $DIR/../bin/lncli $@
+  $DIR/../bin/lncli lnd1 $@
 }
 
 cln1() {
-  $DIR/../bin/clncli $@
+  $DIR/../bin/lightning-cli cln1 $@
 }
 
 eclair1() {
-  $DIR/../bin/eclair-cli $@
+  $DIR/../bin/eclair-cli eclair1 $@
+}
+
+lnd2() {
+  $DIR/../bin/lncli lnd2 $@
+}
+
+cln2() {
+  $DIR/../bin/lightning-cli cln2 $@
+}
+
+eclair2() {
+  $DIR/../bin/eclair-cli eclair2 $@
 }
 
 waitFor() {
@@ -54,6 +66,15 @@ generateAddresses() {
 
   ECLAIR1_ADDRESS=$(eclair1 getnewaddress)
   echo ECLAIR1_ADDRESS: $ECLAIR1_ADDRESS
+
+  LND2_ADDRESS=$(lnd2 newaddress p2wkh | jq -r .address)
+  echo LND2_ADDRESS: $LND2_ADDRESS
+
+  CLN2_ADDRESS=$(cln2 newaddr | jq -r .bech32)
+  echo CLN2_ADDRESS: $CLN2_ADDRESS
+
+  ECLAIR2_ADDRESS=$(eclair2 getnewaddress)
+  echo ECLAIR2_ADDRESS: $ECLAIR2_ADDRESS
 }
 
 getNodeInfo() {
@@ -78,11 +99,34 @@ getNodeInfo() {
   ECLAIR1_NODE_URI="${ECLAIR1_PUBKEY}@${ECLAIR1_PUBLIC_ADDRESS}"
   echo ECLAIR1_PUBKEY: $ECLAIR1_PUBKEY
   echo ECLAIR1_NODE_URI: $ECLAIR1_NODE_URI
+
+
+  LND2_NODE_INFO=$(lnd2 getinfo)
+  LND2_NODE_URI=$(echo ${LND2_NODE_INFO} | jq -r .uris[0])
+  LND2_PUBKEY=$(echo ${LND2_NODE_INFO} | jq -r .identity_pubkey)
+  echo LND2_PUBKEY: $LND2_PUBKEY
+  echo LND2_NODE_URI: $LND2_NODE_URI
+
+
+  CLN2_NODE_INFO=$(cln2 getinfo)
+  CLN2_PUBKEY=$(echo ${CLN2_NODE_INFO} | jq -r .id)
+  CLN2_IP_ADDRESS=$(echo ${CLN2_NODE_INFO} | jq -r '.binding[0].address')
+  CLN2_PORT=$(echo ${CLN2_NODE_INFO} | jq -r '.binding[0].port')
+  CLN2_NODE_URI="${CLN2_PUBKEY}@${CLN2_IP_ADDRESS}:${CLN2_PORT}"
+  echo CLN2_PUBKEY: $CLN2_PUBKEY
+  echo CLN2_NODE_URI: $CLN2_NODE_URI
+
+  ECLAIR2_NODE_INFO=$(eclair2 getinfo)
+  ECLAIR2_PUBKEY=$(echo ${ECLAIR2_NODE_INFO} | jq -r .nodeId)
+  ECLAIR2_PUBLIC_ADDRESS=$(echo ${ECLAIR2_NODE_INFO} | jq -r '.publicAddresses[0]')
+  ECLAIR2_NODE_URI="${ECLAIR2_PUBKEY}@${ECLAIR2_PUBLIC_ADDRESS}"
+  echo ECLAIR2_PUBKEY: $ECLAIR2_PUBKEY
+  echo ECLAIR2_NODE_URI: $ECLAIR2_NODE_URI
 }
 
 sendFundingTransaction() {
   echo creating raw tx...
-  local addresses=($LND1_ADDRESS $CLN1_ADDRESS $ECLAIR1_ADDRESS)
+  local addresses=($LND1_ADDRESS $CLN1_ADDRESS $ECLAIR1_ADDRESS $LND2_ADDRESS $CLN2_ADDRESS $ECLAIR2_ADDRESS)
   local outputs=$(jq -nc --arg amount 1 '$ARGS.positional | reduce .[] as $address ({}; . + {($address) : ($amount | tonumber)})' --args "${addresses[@]}")
   RAW_TX=$(bitcoind createrawtransaction "[]" $outputs)
   echo RAW_TX: $RAW_TX
@@ -104,6 +148,9 @@ fundNodes() {
   sendFundingTransaction
   sendFundingTransaction
   sendFundingTransaction
+  sendFundingTransaction
+  sendFundingTransaction
+  sendFundingTransaction
 
   # Generate some blocks to confirm the transactions.
   mineBlocks $BITCOIN_ADDRESS 10
@@ -114,12 +161,25 @@ openChannel() {
   waitFor lnd1 connect $CLN1_NODE_URI
   waitFor lnd1 openchannel $CLN1_PUBKEY 10000000 5000000
 
-  # Generate some blocks to confirm the channel.
-  mineBlocks $BITCOIN_ADDRESS 10
-
   # Open a channel between lnd1 and eclair1.
   waitFor lnd1 connect $ECLAIR1_NODE_URI
   waitFor lnd1 openchannel $ECLAIR1_PUBKEY 10000000 5000000
+
+
+
+  # Open a channel between lnd1 and lnd2.
+  waitFor lnd1 connect $LND2_NODE_URI
+  waitFor lnd1 openchannel $LND2_PUBKEY 10000000 5000000
+
+
+
+  # Open a channel between lnd2 and cln2.
+  waitFor lnd2 connect $CLN2_NODE_URI
+  waitFor lnd2 openchannel $CLN2_PUBKEY 10000000 5000000
+
+  # Open a channel between lnd2 and eclair2.
+  waitFor lnd2 connect $ECLAIR2_NODE_URI
+  waitFor lnd2 openchannel $ECLAIR2_PUBKEY 10000000 5000000
 
   # Generate some blocks to confirm the channel.
   mineBlocks $BITCOIN_ADDRESS 10
@@ -127,9 +187,14 @@ openChannel() {
 
 waitForNodes() {
   waitFor bitcoind getnetworkinfo
+
   waitFor lnd1 getinfo
   waitFor cln1 getinfo
   waitFor eclair1 getinfo
+
+  waitFor lnd2 getinfo
+  waitFor cln2 getinfo
+  waitFor eclair2 getinfo
 }
 
 main() {

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+docker exec bolt12-playground-${1}-1 lightning-cli --regtest "${@:2}" || echo "Usage: lightning-cli {lightning-cli command, e.g. getinfo}"
