@@ -124,6 +124,35 @@ services:
       - "./conf/eclair/eclair2.conf:/data/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
+  cln3:
+    image: elementsproject/lightningd:v24.02
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.3.30
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.3.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln3 --rgb=FF0000
+    volumes:
+      - "cln3:/root/.lightning"
+      - "bitcoind:/root/.lightning/bitcoin"
+      - "./conf/cln/config:/root/.lightning/config"
+
+  eclair3:
+    build: ./docker/eclair
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.3.31
+    environment:
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+    volumes:
+      - "eclair3:/data"
+      - "./conf/eclair/eclair3.conf:/data/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+
   blockgen:
     build: ./docker/blockgen
     command: [ "/bin/sh", "/app/blockgen.sh" ]
@@ -169,6 +198,8 @@ volumes:
   lndk2:
   cln2:
   eclair2:
+  cln3:
+  eclair3:
 
 networks:
   testing_net:

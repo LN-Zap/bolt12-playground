@@ -41,6 +41,8 @@ graph LR
     lnd1 --10M (5M/5M)--> lnd2
     lnd2 --10M (5M/5M)--> cln2
     lnd2 --10M (5M/5M)--> eclair2
+    cln2 --10M (5M/5M)--> cln3
+    eclair2 --10M (5M/5M)--> eclair3
 ```
 
 - A channel between `lnd1` and `cln1` with a local capacity of 10,000,000 satoshis and a remote capacity of 5,000,000 satoshis.
