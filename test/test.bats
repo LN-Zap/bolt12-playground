@@ -113,6 +113,7 @@ pay_offer() {
     rm $tmpfile
     if [ $status -ne 0 ]; then
         echo "Failed to pay bolt12 offer from $pay_node: $output"
+        echo Commad ran was "./bin/lndk-cli $pay_node pay-offer $offer $amount"
         return 1
     fi
     echo "Successfully paid bolt12 offer from $pay_node"
