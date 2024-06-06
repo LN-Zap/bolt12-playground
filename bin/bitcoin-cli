@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
-docker exec bolt12-playground-bitcoind-1 bitcoin-cli -rpcport=43782 -rpcuser=user -rpcpassword=pass -regtest "${@:1}"
+tmpfile=$(mktemp)
+docker exec bolt12-playground-bitcoind-1 bitcoin-cli -rpcport=43782 -rpcuser=user -rpcpassword=pass -regtest "${@:1}" > $tmpfile 2>&1
+status=$?
+output=$(< $tmpfile)
+rm $tmpfile
+
+if [ $status -ne 0 ]; then
+    echo "$output"
+    exit 1
+else
+    echo "$output"
+fi

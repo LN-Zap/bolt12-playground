@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
-docker exec bolt12-playground-${1}-1 lndk-cli "${@:2}" || echo "Usage: lndk-cli {lndk command, e.g. decode}"
+tmpfile=$(mktemp)
+docker exec bolt12-playground-${1}-1 lndk-cli "${@:2}" > $tmpfile 2>&1
+status=$?
+output=$(< $tmpfile)
+rm $tmpfile
+
+if [ $status -ne 0 ] || [[ $output == *Error* ]]; then
+    echo "$output"
+    exit 1
+else
+    echo "$output"
+fi

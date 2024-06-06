@@ -120,6 +120,20 @@ This command displays a list of all commands that you can issue against the `ecl
 ./bin/lndk-cli lndk1 pay-offer [BOLT12_OFFER]
 ```
 
+## Running Tests
+
+This project uses Bats (Bash Automated Testing System) for testing. To run the tests, you first need to install Bats. You can find installation instructions in the [Bats documentation](https://bats-core.readthedocs.io/).
+
+Once you have Bats installed, you can run the tests with the following command:
+
+```sh
+bats test/
+```
+
+This will run all test files in the `tests/` directory.
+
+Each test is a separate function in the Bats file, and Bats will report a success or failure for each test. If a test fails, Bats will also display the output from the test, which can help you diagnose the problem.
+
 
 ## Clean up
 
@@ -129,3 +143,4 @@ This will remove all docker container, images, and volumes created by this proje
 ```sh
 ./scripts/clean.sh
 ```
+
