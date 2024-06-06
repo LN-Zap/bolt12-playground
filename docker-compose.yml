@@ -18,7 +18,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.2
-    command: --externalip=172.30.1.2 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd1
+    command: --externalip=172.30.1.2 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd1 --color=#89CFF0
     volumes:
       - "lnd1:/root/.lnd"
       - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
@@ -46,7 +46,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1 --rgb=FF0000
     volumes:
       - "cln1:/root/.lightning"
       - "bitcoind:/root/.lightning/bitcoin"
@@ -75,7 +75,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.2.1
-    command: --externalip=172.30.2.1 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2
+    command: --externalip=172.30.2.1 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2 --color=#89CFF0
     volumes:
       - "lnd2:/root/.lnd"
       - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
@@ -103,7 +103,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.2.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2 --rgb=FF0000
     volumes:
       - "cln2:/root/.lightning"
       - "bitcoind:/root/.lightning/bitcoin"
