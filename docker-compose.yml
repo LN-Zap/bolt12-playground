@@ -135,6 +135,30 @@ services:
     depends_on:
       - bitcoind
 
+  lnvisapi:
+      image: maxkotlan/ln-visualizer-api:v0.0.28
+      restart: on-failure
+      networks:
+        testing_net:
+          ipv4_address: 172.30.10.0
+      volumes:
+          - "lnd1:/lnd:ro"
+      environment:
+          LND_CERT_FILE: '/lnd/tls.cert'
+          LND_MACAROON_FILE: '/lnd/data/chain/bitcoin/regtest/readonly.macaroon'
+          LND_SOCKET: lnd1:10009
+
+  lnvisweb:
+      image: maxkotlan/ln-visualizer-web:v0.0.28
+      restart: on-failure
+      networks:
+        testing_net:
+          ipv4_address: 172.30.10.1
+      ports:
+          - '5646:80'
+      environment:
+          LN_VISUALIZER_API_URL: 'http://lnvisapi:5647'
+
 volumes:
   bitcoind:
   lnd1:
