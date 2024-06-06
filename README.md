@@ -22,11 +22,11 @@ This script sets up a network of nodes and channels for the Lightning Network. T
 
 ### Nodes
 
-The script sets up six nodes:
+The script sets up eight nodes:
 
 - `lnd1` and `lnd2`: These are instances of the LND implementation.
-- `cln1` and `cln2`: These are instances of the c-lightning implementation.
-- `eclair1` and `eclair2`: These are instances of the Eclair implementation.
+- `cln1`, `cln2`, and `cln3`: These are instances of the c-lightning implementation.
+- `eclair1`, `eclair2` and `eclair3`: These are instances of the Eclair implementation.
 
 Each node is funded with Bitcoin through a series of transactions.
 
@@ -53,7 +53,7 @@ LN-Visualizer is a tool that allows you to visualize the Lightning Network nodes
 
 You can interact with any of the nodes using CLI commands. The bin scripts provided in the repository allow you to issue commands against any of the nodes. 
 
-To use the CLI commands, you need to pass the node name as the first argument to the relevant bin script. The node names are `lnd1`, `lnd2`, `cln1`, `cln2`, `eclair1`, and `eclair2`.
+To use the CLI commands, you need to pass the node name as the first argument to the relevant bin script. The node names are `lnd1`, `lnd2`, `cln1`, `cln2`, `cln3`, `eclair1`, `eclair2`, and `eclair3`.
 
 Here's an example of how to use the CLI commands:
 
@@ -111,7 +111,7 @@ This command displays a list of all commands that you can issue against the `ecl
 **Generate a bolt 12 offer:**
 
 ```sh
-./bin/lightning-cli cln1 offer 1000 "test offer from cln"
+./bin/lightning-cli cln1 offer 1000 "test offer from cln1"
 ```
 
 **Pay to bolt 12 offer:**
