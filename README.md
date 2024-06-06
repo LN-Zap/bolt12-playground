@@ -51,6 +51,10 @@ graph LR
 - A channel between `lnd2` and `cln2` with a local capacity of 10,000,000 satoshis and a remote capacity of 5,000,000 satoshis.
 - A channel between `lnd2` and `eclair2` with a local capacity of 10,000,000 satoshis and a remote capacity of 5,000,000 satoshis.
 
+## Visualizing the Network with LN-Visualizer
+
+LN-Visualizer is a tool that allows you to visualize the Lightning Network nodes and channels. It can be accessed at [http://localhost:5646/](http://localhost:5646/).
+
 ## Using CLI Commands
 
 You can interact with any of the nodes using CLI commands. The bin scripts provided in the repository allow you to issue commands against any of the nodes. 
