@@ -124,6 +124,17 @@ services:
       - "./conf/eclair/eclair2.conf:/data/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
+  blockgen:
+    build: ./docker/blockgen
+    command: [ "/bin/sh", "/app/blockgen.sh" ]
+    networks:
+      testing_net:
+        ipv4_address: 172.30.9.1
+    volumes:
+      - "./docker/blockgen/blockgen.sh:/app/blockgen.sh"
+    depends_on:
+      - bitcoind
+
 volumes:
   bitcoind:
   lnd1:
