@@ -18,7 +18,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.2
-    command: --externalip=172.30.1.2 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd1
+    command: --externalip=172.30.1.2 --externalip=lnd1:9735 --tlsextradomain=lnd1 --alias=lnd1 --color=#89CFF0
     volumes:
       - "lnd1:/root/.lnd"
       - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
@@ -46,7 +46,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1 --rgb=FF0000
     volumes:
       - "cln1:/root/.lightning"
       - "bitcoind:/root/.lightning/bitcoin"
@@ -75,7 +75,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.2.1
-    command: --externalip=172.30.2.1 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2
+    command: --externalip=172.30.2.1 --externalip=lnd2:9735 --tlsextradomain=lnd2 --alias=lnd2 --color=#89CFF0
     volumes:
       - "lnd2:/root/.lnd"
       - "./conf/lnd/lnd.conf:/root/.lnd/lnd.conf"
@@ -103,7 +103,7 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.2.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2 --rgb=FF0000
     volumes:
       - "cln2:/root/.lightning"
       - "bitcoind:/root/.lightning/bitcoin"
@@ -124,6 +124,70 @@ services:
       - "./conf/eclair/eclair2.conf:/data/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
+  cln3:
+    image: elementsproject/lightningd:v24.02
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.3.30
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.3.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln3 --rgb=FF0000
+    volumes:
+      - "cln3:/root/.lightning"
+      - "bitcoind:/root/.lightning/bitcoin"
+      - "./conf/cln/config:/root/.lightning/config"
+
+  eclair3:
+    build: ./docker/eclair
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    networks:
+      testing_net:
+        ipv4_address: 172.30.3.31
+    environment:
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+    volumes:
+      - "eclair3:/data"
+      - "./conf/eclair/eclair3.conf:/data/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+
+  blockgen:
+    build: ./docker/blockgen
+    command: [ "/bin/sh", "/app/blockgen.sh" ]
+    networks:
+      testing_net:
+        ipv4_address: 172.30.9.1
+    volumes:
+      - "./docker/blockgen/blockgen.sh:/app/blockgen.sh"
+    depends_on:
+      - bitcoind
+
+  lnvisapi:
+      image: maxkotlan/ln-visualizer-api:v0.0.28
+      restart: on-failure
+      networks:
+        testing_net:
+          ipv4_address: 172.30.10.0
+      volumes:
+          - "lnd1:/lnd:ro"
+      environment:
+          LND_CERT_FILE: '/lnd/tls.cert'
+          LND_MACAROON_FILE: '/lnd/data/chain/bitcoin/regtest/readonly.macaroon'
+          LND_SOCKET: lnd1:10009
+
+  lnvisweb:
+      image: maxkotlan/ln-visualizer-web:v0.0.28
+      restart: on-failure
+      networks:
+        testing_net:
+          ipv4_address: 172.30.10.1
+      ports:
+          - '5646:80'
+      environment:
+          LN_VISUALIZER_API_URL: 'http://lnvisapi:5647'
+
 volumes:
   bitcoind:
   lnd1:
@@ -134,6 +198,8 @@ volumes:
   lndk2:
   cln2:
   eclair2:
+  cln3:
+  eclair3:
 
 networks:
   testing_net:
