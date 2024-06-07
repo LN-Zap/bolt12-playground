@@ -20,6 +20,8 @@ docker compose up
 
 This script sets up a network of nodes and channels for the Lightning Network. The nodes are instances of different Lightning Network implementations, including LND, c-lightning (CLN), and Eclair.
 
+***NOTE: the init script must be run no later than 60 seconds after starting the nodes, otherwise nodes may crash due to an uninitialised blockchain***
+
 ### Nodes
 
 The script sets up eight nodes:
