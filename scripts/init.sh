@@ -39,10 +39,17 @@ eclair3() {
 }
 
 waitFor() {
-  until $@; do
+  counter=0
+  until $@ || [ $counter -eq 60 ]; do
     >&2 echo "$@ unavailable - waiting..."
     sleep 1
+    ((counter++))
   done
+
+  if [ $counter -eq 60 ]; then
+    >&2 echo "Waited for 60 seconds, but $@ is still unavailable. Exiting."
+    exit 1
+  fi
 }
 
 createBitcoindWallet() {
