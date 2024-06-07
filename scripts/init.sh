@@ -69,10 +69,12 @@ initBitcoinChain() {
   mineBlocks $BITCOIN_ADDRESS 103
 }
 
-generateAddresses() {
+generateBitcoinAddress() {
   BITCOIN_ADDRESS=$(bitcoind getnewaddress)
   echo BITCOIN_ADDRESS: $BITCOIN_ADDRESS
+}
 
+generateNodeAddresses() {
   LND1_ADDRESS=$(lnd1 newaddress p2wkh | jq -r .address)
   echo LND1_ADDRESS: $LND1_ADDRESS
 
@@ -239,9 +241,13 @@ openChannel() {
   mineBlocks $BITCOIN_ADDRESS 10
 }
 
-waitForNodes() {
-  waitFor bitcoind getnetworkinfo
 
+waitBitcoind() {
+  waitFor bitcoind getnetworkinfo
+}
+
+
+waitForNodes() {
   waitFor lnd1 getinfo
   waitFor cln1 getinfo
   waitFor eclair1 getinfo
@@ -255,11 +261,13 @@ waitForNodes() {
 }
 
 main() {
+  waitBitcoind
   createBitcoindWallet
-  waitForNodes
-  generateAddresses
-  getNodeInfo
+  generateBitcoinAddress
   initBitcoinChain
+  waitForNodes
+  generateNodeAddresses
+  getNodeInfo
   fundNodes
   openChannel
 }

@@ -32,8 +32,8 @@ services:
     environment:
       - RUST_BACKTRACE=1
     volumes:
-      - "lnd1:/root/.lnd"
       - "lndk1:/root/.lndk"
+      - "lnd1:/root/.lnd:ro"
     networks:
       testing_net:
         ipv4_address: 172.30.1.3
@@ -46,14 +46,16 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.1.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1 --rgb=FF0000
+    entrypoint: ["/wait-for-bitcoind.sh"]
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.1.30:9735 --bitcoin-retry-timeout=180 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln1 --rgb=FF0000
     volumes:
       - "cln1:/root/.lightning"
-      - "bitcoind:/root/.lightning/bitcoin"
+      - "bitcoind:/root/.lightning/bitcoin:ro"
       - "./conf/cln/config:/root/.lightning/config"
+      - "./docker/cln/wait-for-bitcoind.sh:/wait-for-bitcoind.sh"
 
   eclair1:
-    image: lnzap/eclair:v0.10.0.strike.2
+    image: lnzap/eclair:0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -61,11 +63,11 @@ services:
       testing_net:
         ipv4_address: 172.30.1.31
     environment:
-      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/eclair/logback-custom.xml
     volumes:
       - "eclair1:/data"
-      - "./conf/eclair/eclair1.conf:/data/eclair.conf"
-      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+      - "./conf/eclair/eclair1.conf:/eclair/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
 
   lnd2:
     image: lightninglabs/lnd:v0.18.0-beta.1
@@ -89,8 +91,8 @@ services:
     environment:
       - RUST_BACKTRACE=1
     volumes:
-      - "lnd2:/root/.lnd"
       - "lndk2:/root/.lndk"
+      - "lnd2:/root/.lnd:ro"
     networks:
       testing_net:
         ipv4_address: 172.30.2.2
@@ -103,14 +105,16 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.2.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2 --rgb=FF0000
+    entrypoint: ["/wait-for-bitcoind.sh"]
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.2.30:9735 --bitcoin-retry-timeout=180 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln2 --rgb=FF0000
     volumes:
       - "cln2:/root/.lightning"
-      - "bitcoind:/root/.lightning/bitcoin"
+      - "bitcoind:/root/.lightning/bitcoin:ro"
       - "./conf/cln/config:/root/.lightning/config"
+      - "./docker/cln/wait-for-bitcoind.sh:/wait-for-bitcoind.sh"
 
   eclair2:
-    image: lnzap/eclair:v0.10.0.strike.2
+    image: lnzap/eclair:0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -118,11 +122,11 @@ services:
       testing_net:
         ipv4_address: 172.30.2.31
     environment:
-      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/eclair/logback-custom.xml
     volumes:
       - "eclair2:/data"
-      - "./conf/eclair/eclair2.conf:/data/eclair.conf"
-      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+      - "./conf/eclair/eclair2.conf:/eclair/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
 
   cln3:
     image: elementsproject/lightningd:v24.05
@@ -132,14 +136,16 @@ services:
     networks:
       testing_net:
         ipv4_address: 172.30.3.30
-    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.3.30:9735 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln3 --rgb=FF0000
+    entrypoint: ["/wait-for-bitcoind.sh"]
+    command: --network=regtest --addr=0.0.0.0:9735 --announce-addr=172.30.3.30:9735 --bitcoin-retry-timeout=180 --developer --dev-fast-gossip --dev-bitcoind-poll=2 --alias=cln3 --rgb=FF0000
     volumes:
       - "cln3:/root/.lightning"
-      - "bitcoind:/root/.lightning/bitcoin"
+      - "bitcoind:/root/.lightning/bitcoin:ro"
       - "./conf/cln/config:/root/.lightning/config"
+      - "./docker/cln/wait-for-bitcoind.sh:/wait-for-bitcoind.sh"
 
   eclair3:
-    image: lnzap/eclair:v0.10.0.strike.2
+    image: lnzap/eclair:0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -147,11 +153,11 @@ services:
       testing_net:
         ipv4_address: 172.30.3.31
     environment:
-      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/data/logback-custom.xml
+      - JAVA_OPTS=-Declair.printToConsole -Dakka.loglevel=DEBUG -Dlogback.configurationFile=/eclair/logback-custom.xml
     volumes:
       - "eclair3:/data"
-      - "./conf/eclair/eclair3.conf:/data/eclair.conf"
-      - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
+      - "./conf/eclair/eclair3.conf:/eclair/eclair.conf"
+      - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
 
   blockgen:
     build: ./docker/blockgen
