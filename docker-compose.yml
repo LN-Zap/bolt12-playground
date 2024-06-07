@@ -53,7 +53,7 @@ services:
       - "./conf/cln/config:/root/.lightning/config"
 
   eclair1:
-    build: ./docker/eclair
+    image: lnzap/eclair:v0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -110,7 +110,7 @@ services:
       - "./conf/cln/config:/root/.lightning/config"
 
   eclair2:
-    build: ./docker/eclair
+    image: lnzap/eclair:v0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -139,7 +139,7 @@ services:
       - "./conf/cln/config:/root/.lightning/config"
 
   eclair3:
-    build: ./docker/eclair
+    image: lnzap/eclair:v0.10.0.strike.2
     restart: unless-stopped
     depends_on:
       - bitcoind
