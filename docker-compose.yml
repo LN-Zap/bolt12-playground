@@ -11,7 +11,7 @@ services:
       - "./conf/bitcoind/bitcoin.conf:/data/.bitcoin/bitcoin.conf"
 
   lnd1:
-    build: ./docker/lnd
+    image: lightninglabs/lnd:v0.18.0-beta.1
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -68,7 +68,7 @@ services:
       - "./conf/eclair/logback-custom.xml:/data/logback-custom.xml"
 
   lnd2:
-    build: ./docker/lnd
+    image: lightninglabs/lnd:v0.18.0-beta.1
     restart: unless-stopped
     depends_on:
       - bitcoind
