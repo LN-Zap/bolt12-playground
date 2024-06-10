@@ -2,6 +2,11 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+
+setup () {
+  $DIR/setup.sh
+}
+
 bitcoind() {
   $DIR/../bin/bitcoin-cli $@
 }
@@ -261,6 +266,7 @@ waitForNodes() {
 }
 
 main() {
+  setup
   waitBitcoind
   createBitcoindWallet
   generateBitcoinAddress
