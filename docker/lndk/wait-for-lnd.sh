@@ -5,7 +5,6 @@
 #
 # Arguments:
 #   host       The host of the lnd's gRPC service.
-#   delay      The delay (in seconds) for the startup of lndk nodes after lnd's gRPC port is ready.
 #   lndk-args  The arguments to be passed to the lndk command.
 
 is_lnd_ready() {
