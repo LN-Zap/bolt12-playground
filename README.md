@@ -6,13 +6,23 @@ You can use this to get familiar with [Bolt 12](https://bolt12.org/).
 
 ## Setup
 
+**Clone the repository:**
+
+```sh
+git clone --recursive https://github.com/your/repo.git
+```
+
 **Start nodes:**
+
+Start the docker stack to start the nodes:
 
 ```sh
 docker compose up
 ```
 
 **Initialise the nodes:**
+
+In a separate terminal, run the following command to initialise the nodes:
 
 ```sh
 ./scripts/init.sh
