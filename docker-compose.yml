@@ -28,12 +28,14 @@ services:
     restart: unless-stopped
     depends_on:
       - lnd1
+    entrypoint: ["/wait-for-lnd.sh", "lnd1"]
     command: --address=https://lnd1:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
     environment:
       - RUST_BACKTRACE=1
     volumes:
       - "lndk1:/root/.lndk"
       - "lnd1:/root/.lnd:ro"
+      - "./docker/lndk/wait-for-lnd.sh:/wait-for-lnd.sh"
     networks:
       testing_net:
         ipv4_address: 172.30.1.3
@@ -87,12 +89,14 @@ services:
     restart: unless-stopped
     depends_on:
       - lnd2
+    entrypoint: ["/wait-for-lnd.sh", "lnd2"]
     command: --address=https://lnd2:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
     environment:
       - RUST_BACKTRACE=1
     volumes:
       - "lndk2:/root/.lndk"
       - "lnd2:/root/.lnd:ro"
+      - "./docker/lndk/wait-for-lnd.sh:/wait-for-lnd.sh"
     networks:
       testing_net:
         ipv4_address: 172.30.2.2
