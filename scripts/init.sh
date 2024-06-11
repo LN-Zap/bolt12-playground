@@ -5,7 +5,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 setup () {
   $DIR/setup.sh
+
+  echo "Cleaning up from previous runs..."
   docker compose down --volumes
+
+  echo
+  echo "Starting the stack..."
   docker compose up -d
 }
 
@@ -57,6 +62,10 @@ waitFor() {
     >&2 echo "Waited for 60 seconds, but $@ is still unavailable. Exiting."
     exit 1
   fi
+}
+
+print_section() {
+  echo -e "\033[1;34m\n==================== $1 ====================\033[0m"
 }
 
 createBitcoindWallet() {
@@ -281,7 +290,7 @@ waitForGraphSync() {
   start_time=$(date +%s)
   timeout=$((start_time + 600))
 
-  echo "Starting node graph validation. This could take a few minutes..."
+  echo "Initiating node graph validation. Please wait, this may take up to 10 minutes..."
 
   # Loop until all nodes have an address or the timeout is reached
   while true; do
@@ -339,9 +348,11 @@ waitForGraphSync() {
   echo "All nodes have an address after $elapsed_time seconds"
 }
 
-# Helper function to print colored text
-print_section() {
-  echo -e "\033[1;34m\n==================== $1 ====================\033[0m"
+restartLndkNodes() {
+  docker-compose restart lndk1
+  docker-compose restart lndk2
+
+  echo "LNDK nodes restarted successfully."
 }
 
 main() {
@@ -377,6 +388,13 @@ main() {
 
   print_section "VALIDATE NODE GRAPH"
   waitForGraphSync
+
+  # This is a hack to work around onion message feature detection.
+  print_section "RESTARTING LNDK NODES"
+  restartLndkNodes
+
+  print_section "NODE INFO"
+  getNodeInfo
 }
 
 main
