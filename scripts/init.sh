@@ -5,6 +5,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 setup () {
   $DIR/setup.sh
+  docker compose down --volumes
+  docker compose up -d
 }
 
 bitcoind() {
@@ -111,7 +113,6 @@ getNodeInfo() {
   LND1_PUBKEY=$(echo ${LND1_NODE_INFO} | jq -r .identity_pubkey)
   echo LND1_PUBKEY: $LND1_PUBKEY
   echo LND1_NODE_URI: $LND1_NODE_URI
-
 
   CLN1_NODE_INFO=$(cln1 getinfo)
   CLN1_PUBKEY=$(echo ${CLN1_NODE_INFO} | jq -r .id)
@@ -251,7 +252,6 @@ waitBitcoind() {
   waitFor bitcoind getnetworkinfo
 }
 
-
 waitForNodes() {
   waitFor lnd1 getinfo
   waitFor cln1 getinfo
@@ -265,17 +265,118 @@ waitForNodes() {
   waitFor eclair3 getinfo
 }
 
+waitForGraphSync() {
+  # Declare an associative array with node names as keys and public keys as values
+  declare -A nodes=(
+      ["LND2"]=$LND2_PUBKEY
+      ["ECLAIR1"]=$ECLAIR1_PUBKEY
+      ["ECLAIR2"]=$ECLAIR2_PUBKEY
+      ["ECLAIR3"]=$ECLAIR3_PUBKEY
+      ["CLN1"]=$CLN1_PUBKEY
+      ["CLN2"]=$CLN2_PUBKEY
+      ["CLN3"]=$CLN3_PUBKEY
+  )
+
+  # Get the current time and set a timeout of 10 minutes
+  start_time=$(date +%s)
+  timeout=$((start_time + 600))
+
+  echo "Starting node graph validation. This could take a few minutes..."
+
+  # Loop until all nodes have an address or the timeout is reached
+  while true; do
+    all_nodes_have_address=true
+
+    # Loop over all nodes
+    for node in "${!nodes[@]}"; do
+      # If the public key for a node is not set, exit with an error
+      if [ -z "${nodes[$node]}" ]; then
+        echo "Error: Public key for $node is not set"
+        exit 1
+      fi
+
+      # Get node info and check if the command succeeded
+      node_info=$(lnd1 getnodeinfo ${nodes[$node]} 2>&1)
+      if [ $? -ne 0 ]; then
+        echo "Error: Failed to get node info for $node"
+        echo "Details: $node_info"
+        all_nodes_have_address=false
+        break
+      fi
+
+      # Extract the addresses from the node info
+      node_addresses=$(echo "$node_info" | jq -c '.node.addresses')
+      echo "Addresses for $node: $node_addresses"
+
+      # Count the number of addresses and check if it's zero
+      address_count=$(echo "$node_addresses" | jq 'if . == [] then 0 else length end')
+      if [ $address_count -eq 0 ]; then
+        echo "Error: $node is missing an address"
+        all_nodes_have_address=false
+        break
+      fi
+    done
+
+    # If all nodes have an address, break the loop
+    if $all_nodes_have_address; then
+      break
+    fi
+
+    # If the current time is greater than or equal to the timeout, exit with an error
+    current_time=$(date +%s)
+    if [ $current_time -ge $timeout ]; then
+      echo "Timeout: Not all nodes have an address after 10 minutes"
+      exit 1
+    fi
+
+    # Wait for 5 seconds before the next iteration
+    sleep 5
+  done
+
+  # Calculate the elapsed time and print a success message
+  end_time=$(date +%s)
+  elapsed_time=$((end_time - start_time))
+  echo "All nodes have an address after $elapsed_time seconds"
+}
+
+# Helper function to print colored text
+print_section() {
+  echo -e "\033[1;34m\n==================== $1 ====================\033[0m"
+}
+
 main() {
+  print_section "SETUP"
   setup
+
+  print_section "WAIT FOR BITCOIND"
   waitBitcoind
+
+  print_section "CREATE BITCOIND WALLET"
   createBitcoindWallet
+
+  print_section "GENERATE BITCOIN ADDRESS"
   generateBitcoinAddress
+
+  print_section "INITIALIZE BITCOIN CHAIN"
   initBitcoinChain
+
+  print_section "WAIT FOR NODES"
   waitForNodes
+
+  print_section "GENERATE NODE ADDRESSES"
   generateNodeAddresses
+
+  print_section "GET NODE INFO"
   getNodeInfo
+
+  print_section "FUND NODES"
   fundNodes
+
+  print_section "OPEN CHANNEL"
   openChannel
+
+  print_section "VALIDATE NODE GRAPH"
+  waitForGraphSync
 }
 
 main

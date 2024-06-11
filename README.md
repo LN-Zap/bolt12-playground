@@ -6,31 +6,33 @@ You can use this to get familiar with [Bolt 12](https://bolt12.org/).
 
 ## Setup
 
-**Clone the repository:**
+**Clone the repository and submodules:**
 
 ```sh
 git clone --recursive https://github.com/your/repo.git
 ```
 
-**Start nodes:**
+**Initialise the network:**
 
-Start the docker stack to start the nodes:
-
-```sh
-docker compose up
-```
-
-**Initialise the nodes:**
-
-In a separate terminal, run the following command to initialise the nodes:
+Run the following command to initialise the nodes:
 
 ```sh
 ./scripts/init.sh
 ```
 
-This script sets up a network of nodes and channels for the Lightning Network. The nodes are instances of different Lightning Network implementations, including LND, c-lightning (CLN), and Eclair.
+This script sets up a dockerized network of lightning nodes and channels which are a mix of different Lightning Network implementations, including LND, c-lightning (CLN), and Eclair.
 
-***NOTE: the init script must be run no later than 60 seconds after starting the nodes, otherwise nodes may crash due to an uninitialised blockchain***
+***NOTE:** the init script must be run no later than 60 seconds after starting the nodes, otherwise nodes may crash due to an uninitialised blockchain*
+
+***NOTE:** It will take a couple of minutes for the network graph to become fully ready through the lnd gosip protocol. The init script will wait for the full sync*
+
+**OR start an already initialised network:**
+
+Run the following command to startup the nodes:
+
+```sh
+docker compose up
+```
 
 ### Nodes
 
