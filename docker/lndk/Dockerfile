@@ -4,7 +4,8 @@
 FROM rust:1.78-bookworm AS builder
 
 # References for lndk
-ARG LNDK_REF=b2586d77ad527b7469c680823da31ae55c489a43
+# https://github.com/lndk-org/lndk/pull/121
+ARG LNDK_REF=ae7832730f36ab497ccf5ce5c3d949e42ad9b91c
 
 # Add utils
 RUN apt-get update \
@@ -17,7 +18,7 @@ RUN apt-get update \
 WORKDIR /usr/src
 
 # Grab and install the latest version of lndk
-RUN git clone https://github.com/lndk-org/lndk.git . \
+RUN git clone https://github.com/orbitalturtle/lndk.git . \
     && git reset --hard ${LNDK_REF} \
     && cargo build --release
 
