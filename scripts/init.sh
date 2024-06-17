@@ -30,6 +30,10 @@ eclair1() {
   $DIR/../bin/eclair-cli eclair1 $@
 }
 
+ldknode1() {
+  $DIR/../bin/ldknode-cli ldknode1 $@
+}
+
 lnd2() {
   $DIR/../bin/lncli lnd2 $@
 }
@@ -40,6 +44,10 @@ cln2() {
 
 eclair2() {
   $DIR/../bin/eclair-cli eclair2 $@
+}
+
+ldknode2() {
+  $DIR/../bin/ldknode-cli ldknode2 $@
 }
 
 cln3() {
@@ -138,12 +146,19 @@ getNodeInfo() {
   echo ECLAIR1_PUBKEY: $ECLAIR1_PUBKEY
   echo ECLAIR1_NODE_URI: $ECLAIR1_NODE_URI
 
+  LDKNODE1_PUBKEY=$(ldknode1 getinfo)
+  LDKNODE1_NODE_URI="${LDKNODE1_PUBKEY}@172.30.1.32:9735"
+  echo LDKNODE1_PUBKEY: $LDKNODE1_PUBKEY
+  echo LDKNODE1_NODE_URI: $LDKNODE1_NODE_URI
+
+
 
   LND2_NODE_INFO=$(lnd2 getinfo)
   LND2_NODE_URI=$(echo ${LND2_NODE_INFO} | jq -r .uris[0])
   LND2_PUBKEY=$(echo ${LND2_NODE_INFO} | jq -r .identity_pubkey)
   echo LND2_PUBKEY: $LND2_PUBKEY
   echo LND2_NODE_URI: $LND2_NODE_URI
+
 
 
   CLN2_NODE_INFO=$(cln2 getinfo)
@@ -160,6 +175,12 @@ getNodeInfo() {
   ECLAIR2_NODE_URI="${ECLAIR2_PUBKEY}@${ECLAIR2_PUBLIC_ADDRESS}"
   echo ECLAIR2_PUBKEY: $ECLAIR2_PUBKEY
   echo ECLAIR2_NODE_URI: $ECLAIR2_NODE_URI
+
+  LDKNODE2_PUBKEY=$(ldknode2 getinfo)
+  LDKNODE2_NODE_URI="${LDKNODE2_PUBKEY}@172.30.2.32:9735"
+  echo LDKNODE2_PUBKEY: $LDKNODE2_PUBKEY
+  echo LDKNODE2_NODE_URI: $LDKNODE2_NODE_URI
+
 
 
   CLN3_NODE_INFO=$(cln3 getinfo)
@@ -223,12 +244,18 @@ openChannel() {
   waitFor lnd1 connect $ECLAIR1_NODE_URI
   waitFor lnd1 openchannel $ECLAIR1_PUBKEY 10000000 5000000
 
+  # Open a channel between lnd1 and ldknode1.
+  echo "Opening channel between lnd1 and ldknode1"
+  waitFor lnd1 connect $LDKNODE1_NODE_URI
+  waitFor lnd1 openchannel $LDKNODE1_PUBKEY 10000000 5000000
+
 
 
   # Open a channel between lnd1 and lnd2.
   echo "Opening channel between lnd1 and lnd2"
   waitFor lnd1 connect $LND2_NODE_URI
   waitFor lnd1 openchannel $LND2_PUBKEY 10000000 5000000
+
 
 
   # Open a channel between lnd2 and cln2.
@@ -240,6 +267,11 @@ openChannel() {
   echo "Opening channel between lnd2 and eclair2"
   waitFor lnd2 connect $ECLAIR2_NODE_URI
   waitFor lnd2 openchannel $ECLAIR2_PUBKEY 10000000 5000000
+
+  # Open a channel between lnd2 and ldknode2.
+  echo "Opening channel between lnd2 and ldknode2"
+  waitFor lnd2 connect $LDKNODE2_NODE_URI
+  waitFor lnd2 openchannel $LDKNODE2_PUBKEY 10000000 5000000
 
 
   # Open a channel between cln2 and cln3.
@@ -265,10 +297,12 @@ waitForNodes() {
   waitFor lnd1 getinfo
   waitFor cln1 getinfo
   waitFor eclair1 getinfo
+  waitFor ldknode1 getinfo
 
   waitFor lnd2 getinfo
   waitFor cln2 getinfo
   waitFor eclair2 getinfo
+  waitFor ldknode2 getinfo
 
   waitFor cln3 getinfo
   waitFor eclair3 getinfo
@@ -284,6 +318,8 @@ waitForGraphSync() {
       ["CLN1"]=$CLN1_PUBKEY
       ["CLN2"]=$CLN2_PUBKEY
       ["CLN3"]=$CLN3_PUBKEY
+      ["LDKNODE1"]=$LDKNODE1_PUBKEY
+      ["LDKNODE2"]=$LDKNODE2_PUBKEY
   )
 
   # Get the current time and set a timeout of 10 minutes

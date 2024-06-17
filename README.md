@@ -1,6 +1,6 @@
 # Bolt 12 Playground
 
-This Bolt 12 Playground provides a docker stack that comprises of bitcoind, [LND](https://github.com/lightningnetwork/lnd), [CLN](https://github.com/ElementsProject/lightning), [Eclair](https://github.com/ACINQ/eclair) and [LNDK](https://github.com/lndk-org/lndk). It connects everything together, initializes wallets, and creates channels between the nodes.
+This Bolt 12 Playground provides a docker stack that comprises of bitcoind, [LND](https://github.com/lightningnetwork/lnd), [LNDK](https://github.com/lndk-org/lndk), [CLN](https://github.com/ElementsProject/lightning), [Eclair](https://github.com/ACINQ/eclair) and [LDK Node](https://github.com/lightningdevkit/ldk-node). It connects everything together, initializes wallets, and creates channels between the nodes.
 
 You can use this to get familiar with [Bolt 12](https://bolt12.org/).
 
@@ -20,7 +20,7 @@ Run the following command to initialise the nodes:
 ./scripts/init.sh
 ```
 
-This script sets up a dockerized network of lightning nodes and channels which are a mix of different Lightning Network implementations, including LND, c-lightning (CLN), and Eclair.
+This script sets up a dockerized network of lightning nodes and channels which are a mix of different Lightning Network implementations, including LND, c-lightning (CLN), Eclair, and LDK Node.
 
 ***NOTE:** the init script must be run no later than 60 seconds after starting the nodes, otherwise nodes may crash due to an uninitialised blockchain*
 
@@ -41,6 +41,7 @@ The script sets up eight nodes:
 - `lnd1` and `lnd2`: These are instances of the LND implementation.
 - `cln1`, `cln2`, and `cln3`: These are instances of the c-lightning implementation.
 - `eclair1`, `eclair2` and `eclair3`: These are instances of the Eclair implementation.
+- `ldknode1`, and `ldknode2`: These are instances of the LDK Node implementation.
 
 Each node is funded with Bitcoin through a series of transactions.
 
@@ -52,9 +53,11 @@ The script sets up the following channels, which allows for testing of Bolt 12 i
 graph LR
     lnd1 --10M (5M/5M)--> cln1
     lnd1 --10M (5M/5M)--> eclair1
+    lnd1 --10M (5M/5M)--> ldknode1
     lnd1 --10M (5M/5M)--> lnd2
     lnd2 --10M (5M/5M)--> cln2
     lnd2 --10M (5M/5M)--> eclair2
+    lnd2 --10M (5M/5M)--> ldknode2
     cln2 --10M (5M/5M)--> cln3
     eclair2 --10M (5M/5M)--> eclair3
 ```
@@ -67,7 +70,12 @@ LN-Visualizer is a tool that allows you to visualize the Lightning Network nodes
 
 You can interact with any of the nodes using CLI commands. The bin scripts provided in the repository allow you to issue commands against any of the nodes. 
 
-To use the CLI commands, you need to pass the node name as the first argument to the relevant bin script. The node names are `lnd1`, `lnd2`, `cln1`, `cln2`, `cln3`, `eclair1`, `eclair2`, and `eclair3`.
+To use the CLI commands, you need to pass the node name as the first argument to the relevant bin script. The node names are:
+
+- `lnd1`, `lnd2`
+- `cln1`, `cln2`, `cln3`
+- `eclair1`, `eclair2`, `eclair3`
+- `ldknode1`, `ldknode2`
 
 Here's an example of how to use the CLI commands:
 
