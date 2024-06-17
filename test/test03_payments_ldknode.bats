@@ -14,7 +14,7 @@ setup() {
     run generate_offer_ldknode 'ldknode1'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -22,6 +22,6 @@ setup() {
     run generate_offer_ldknode 'ldknode2'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }
