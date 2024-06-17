@@ -14,7 +14,7 @@ setup() {
     run generate_offer_eclair 'eclair1'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 1000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -22,7 +22,7 @@ setup() {
     run generate_offer_eclair 'eclair2'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 1000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -30,14 +30,14 @@ setup() {
     run generate_offer_eclair 'eclair3'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 1000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
     assert_line --partial 'Successfully paid for offer!'
 }
 
-@test "Generate bolt12 offer on eclair3 and pay from lndk1 (lnd1 -> lnd2 -> eclair2 -> eclair2)" {
-    run generate_offer_eclair 'eclair2'
+@test "Generate bolt12 offer on eclair3 and pay from lndk1 (lnd1 -> lnd2 -> eclair2 -> eclair3)" {
+    run generate_offer_eclair 'eclair3'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 1000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
     assert_line --partial 'Successfully paid for offer!'
 }
