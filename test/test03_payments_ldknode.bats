@@ -18,7 +18,7 @@ setup() {
     assert_line --partial 'Successfully paid for offer!'
 }
 
-@test "Generate bolt12 offer on ldknode2 and pay from lndk1 (lnd1 -> ldknode2)" {
+@test "Generate bolt12 offer on ldknode2 and pay from lndk1 (lnd1 -> lnd2 -> ldknode2)" {
     run generate_offer_ldknode 'ldknode2'
     assert_line --partial 'lno'
 

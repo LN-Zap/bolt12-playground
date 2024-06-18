@@ -14,7 +14,7 @@ setup() {
     run generate_offer_cln 'cln1'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -22,7 +22,7 @@ setup() {
     run generate_offer_cln 'cln2'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -30,7 +30,7 @@ setup() {
     run generate_offer_cln 'cln3'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk2 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk2 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }
 
@@ -38,6 +38,6 @@ setup() {
     run generate_offer_cln 'cln3'
     assert_line --partial 'lno'
 
-    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 10000
+    run $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $output 5000000
     assert_line --partial 'Successfully paid for offer!'
 }

@@ -8,7 +8,7 @@ fi
 
 # Function to get node pubkey
 getinfo() {
-    docker compose logs "$1" | tac | grep "NODE_ID" | awk '{print $4}' | head -n 1
+    docker compose logs "$1" | tac | grep "CONNECTION_STRING" | awk '{print $4}' | head -n 1
 }
 
 # Function to get offer
