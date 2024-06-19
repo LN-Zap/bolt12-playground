@@ -51,6 +51,28 @@ The script sets up the following channels, which allows for testing of Bolt 12 i
 
 ```mermaid
 graph LR
+    classDef nodes stroke:#FFD4D4,stroke-width:1px,fill:#303030;
+    classDef groups stroke:#grey,stroke-width:1px,fill:none
+
+    subgraph lndgroup ["LND"]
+        lnd1(lnd1)
+        lnd2(lnd2)
+    end
+    subgraph clngroup ["CLN"]
+        cln2(cln3)
+        cln3(cln2)
+        cln1(cln1)
+    end
+    subgraph eclairgroup ["Eclair"]
+        eclair1(eclair1)
+        eclair2(eclair2)
+        eclair3(eclair3)
+    end
+    subgraph ldkgroup ["LDK Node"]
+        ldknode1(ldknode1)
+        ldknode2(ldknode2)
+    end
+
     lnd1 --10M (5M/5M)--> cln1
     lnd1 --10M (5M/5M)--> eclair1
     lnd1 --10M (5M/5M)--> ldknode1
@@ -60,7 +82,11 @@ graph LR
     lnd2 --10M (5M/5M)--> ldknode2
     cln2 --10M (5M/5M)--> cln3
     eclair2 --10M (5M/5M)--> eclair3
+
+    class lndgroup,clngroup,eclairgroup,ldkgroup groups;
+    class lnd1,lnd2,cln1,cln2,cln3,eclair1,eclair2,eclair3,ldknode1,ldknode2 nodes;
 ```
+
 
 ## Visualizing the Network with LN-Visualizer
 
