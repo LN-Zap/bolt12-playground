@@ -1,15 +1,4 @@
 services:
-
-  bitcoind:
-    image: lncm/bitcoind:v27.0
-    restart: unless-stopped
-    networks:
-      testing_net:
-        ipv4_address: 172.30.1.1
-    volumes:
-      - "bitcoind:/data/.bitcoin"
-      - "./conf/bitcoind/bitcoin.conf:/data/.bitcoin/bitcoin.conf"
-
   lnd1:
     image: lightninglabs/lnd:v0.18.0-beta.1
     restart: unless-stopped
@@ -70,6 +59,18 @@ services:
       - "eclair1:/data"
       - "./conf/eclair/eclair1.conf:/eclair/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
+
+  ldknode1:
+    build: ./docker/ldknode
+    restart: unless-stopped
+    depends_on:
+      - electrs
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.32
+    command: /root/.ldknode 172.30.1.32:9735 regtest http://electrs:3002
+    volumes:
+      - "ldknode1:/root/.ldknode"
 
   lnd2:
     image: lightninglabs/lnd:v0.18.0-beta.1
@@ -132,6 +133,18 @@ services:
       - "./conf/eclair/eclair2.conf:/eclair/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
 
+  ldknode2:
+    build: ./docker/ldknode
+    restart: unless-stopped
+    depends_on:
+      - electrs
+    networks:
+      testing_net:
+        ipv4_address: 172.30.2.32
+    command: /root/.ldknode 172.30.2.32:9735 regtest http://electrs:3002
+    volumes:
+      - "ldknode2:/root/.ldknode"
+
   cln3:
     image: elementsproject/lightningd:v24.05
     restart: unless-stopped
@@ -162,6 +175,37 @@ services:
       - "eclair3:/data"
       - "./conf/eclair/eclair3.conf:/eclair/eclair.conf"
       - "./conf/eclair/logback-custom.xml:/eclair/logback-custom.xml"
+
+# --- Additional services ---
+
+  bitcoind:
+    image: lncm/bitcoind:v27.0
+    restart: unless-stopped
+    networks:
+      testing_net:
+        ipv4_address: 172.30.1.1
+    volumes:
+      - "bitcoind:/data/.bitcoin"
+      - "./conf/bitcoind/bitcoin.conf:/data/.bitcoin/bitcoin.conf"
+
+  electrs:
+    image: blockstream/esplora:electrs-cd9f90c115751eb9d2bca9a4da89d10d048ae931
+    platform: linux/amd64
+    depends_on:
+      - bitcoind
+    command: >
+      "/app/electrs_bitcoin/bin/electrs"
+      "-vvvv"
+      "--timestamp"
+      "--jsonrpc-import"
+      "--cookie=user:pass"
+      "--network=regtest"
+      "--daemon-rpc-addr=bitcoind:43782"
+      "--http-addr=0.0.0.0:3002"
+    ports:
+      - "3002:3002"
+    networks:
+      - testing_net
 
   blockgen:
     build: ./docker/blockgen
@@ -204,10 +248,12 @@ volumes:
   lndk1:
   cln1:
   eclair1:
+  ldknode1:
   lnd2:
   lndk2:
   cln2:
   eclair2:
+  ldknode2:
   cln3:
   eclair3:
 
