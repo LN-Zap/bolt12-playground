@@ -319,7 +319,7 @@ waitForGraphSync() {
       ["CLN2"]=$CLN2_PUBKEY
       ["CLN3"]=$CLN3_PUBKEY
       ["LDKNODE1"]=$LDKNODE1_PUBKEY
-      ["LDKNODE2"]=$LDKNODE2_PUBKEY
+      # ["LDKNODE2"]=$LDKNODE2_PUBKEY # FIXME: LDK Node node announcements don't currently propagate beyond the immediate neighbor.
   )
 
   # Get the current time and set a timeout of 10 minutes
