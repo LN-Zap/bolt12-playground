@@ -237,52 +237,52 @@ openChannel() {
   # Open a channel between lnd1 and cln1.
   echo "Opening channel between lnd1 and cln1"
   waitFor lnd1 connect $CLN1_NODE_URI
-  waitFor lnd1 openchannel $CLN1_PUBKEY 10000000 5000000
+  waitFor lnd1 openchannel $CLN1_PUBKEY 15000000 7500000
 
   # Open a channel between lnd1 and eclair1.
   echo "Opening channel between lnd1 and eclair1"
   waitFor lnd1 connect $ECLAIR1_NODE_URI
-  waitFor lnd1 openchannel $ECLAIR1_PUBKEY 10000000 5000000
+  waitFor lnd1 openchannel $ECLAIR1_PUBKEY 15000000 7500000
 
   # Open a channel between lnd1 and ldknode1.
   echo "Opening channel between lnd1 and ldknode1"
   waitFor lnd1 connect $LDKNODE1_NODE_URI
-  waitFor lnd1 openchannel $LDKNODE1_PUBKEY 10000000 5000000
+  waitFor lnd1 openchannel $LDKNODE1_PUBKEY 15000000 7500000
 
 
 
   # Open a channel between lnd1 and lnd2.
   echo "Opening channel between lnd1 and lnd2"
   waitFor lnd1 connect $LND2_NODE_URI
-  waitFor lnd1 openchannel $LND2_PUBKEY 10000000 5000000
+  waitFor lnd1 openchannel $LND2_PUBKEY 15000000 7500000
 
 
 
   # Open a channel between lnd2 and cln2.
   echo "Opening channel between lnd2 and cln2"
   waitFor lnd2 connect $CLN2_NODE_URI
-  waitFor lnd2 openchannel $CLN2_PUBKEY 10000000 5000000
+  waitFor lnd2 openchannel $CLN2_PUBKEY 15000000 7500000
 
   # Open a channel between lnd2 and eclair2.
   echo "Opening channel between lnd2 and eclair2"
   waitFor lnd2 connect $ECLAIR2_NODE_URI
-  waitFor lnd2 openchannel $ECLAIR2_PUBKEY 10000000 5000000
+  waitFor lnd2 openchannel $ECLAIR2_PUBKEY 15000000 7500000
 
   # Open a channel between lnd2 and ldknode2.
   echo "Opening channel between lnd2 and ldknode2"
   waitFor lnd2 connect $LDKNODE2_NODE_URI
-  waitFor lnd2 openchannel $LDKNODE2_PUBKEY 10000000 5000000
+  waitFor lnd2 openchannel $LDKNODE2_PUBKEY 15000000 7500000
 
 
   # Open a channel between cln2 and cln3.
   echo "Opening channel between cln2 and cln3"
   waitFor cln2 connect id=$CLN3_NODE_URI
-  waitFor cln2 fundchannel id=$CLN3_PUBKEY amount=10000000 push_msat=5000000
+  waitFor cln2 fundchannel id=$CLN3_PUBKEY amount=15000000 push_msat=7500000
 
   # Open a channel between eclair2 and eclair3.
   echo "Opening channel between eclair2 and eclair3"
   waitFor eclair2 connect --uri=$ECLAIR3_NODE_URI
-  waitFor eclair2 open --nodeId=$ECLAIR3_PUBKEY --fundingSatoshis=10000000 --pushMsat5000000
+  waitFor eclair2 open --nodeId=$ECLAIR3_PUBKEY --fundingSatoshis=15000000 --pushMsat=7500000
 
   # Generate some blocks to confirm the channel.
   mineBlocks $BITCOIN_ADDRESS 10
