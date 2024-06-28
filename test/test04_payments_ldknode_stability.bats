@@ -33,7 +33,7 @@ attempt() {
     $PROJECT_ROOT/bin/lndk-cli lndk1 pay-offer $OFFER 5000000
 }
 
-@test "Multiple consecutive payments to LDK Node (lnd1 -> lnd2 -> ldknode2 x $TEST_COUNT)" {
+@test "Multiple consecutive payments to LDK Node (lnd1 -> lnd2 -> ldknode2) x 10" {
 
     get_offer
     run print_offer
