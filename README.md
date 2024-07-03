@@ -106,7 +106,7 @@ To use the CLI commands, you need to pass the node name as the first argument to
 Here's an example of how to use the CLI commands:
 
 ```sh
-./bin/lnd.sh lnd1 getinfo
+./bin/lncli lnd1 getinfo
 ```
 
 In this example, `./bin/lncli` is the bin script for the LND nodes, `lnd1` is the name of the node you're issuing the command against, and `getinfo` is the command you're issuing. This command retrieves information about the `lnd1` node.
