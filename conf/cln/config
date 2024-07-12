@@ -8,4 +8,3 @@ bitcoin-rpcpassword=pass
 log-level=debug
 
 experimental-offers
-experimental-onion-messages
