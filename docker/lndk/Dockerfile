@@ -4,8 +4,8 @@
 FROM rust:1.78-bookworm AS builder
 
 # References for lndk
-ARG LNDK_SOURCE=https://github.com/orbitalturtle/lndk.git
-ARG LNDK_REF=3fa88caa6232445bd03eae0590f67fbfd53b4526
+ARG LNDK_SOURCE=https://github.com/lndk-org/lndk.git
+ARG LNDK_REF=60e17a0c94177f7d2d160aa08f5cc32a1274b51e
 
 # Add utils
 RUN apt-get update \
