@@ -18,7 +18,7 @@ services:
     depends_on:
       - lnd1
     entrypoint: ["/wait-for-lnd.sh", "lnd1", "5"]
-    command: --address=https://lnd1:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
+    command: --tls-ip=lndk1.localhost,lndk1.local --address=https://lnd1:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
     environment:
       - RUST_BACKTRACE=1
     volumes:
@@ -91,7 +91,7 @@ services:
     depends_on:
       - lnd2
     entrypoint: ["/wait-for-lnd.sh", "lnd2", "5"]
-    command: --address=https://lnd2:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
+    command: --tls-ip=lndk2.localhost --address=https://lnd2:10009 --cert-path=/root/.lnd/tls.cert --macaroon-path=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon --log-level=trace --grpc-host=0.0.0.0
     environment:
       - RUST_BACKTRACE=1
     volumes:
