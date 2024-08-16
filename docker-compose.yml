@@ -1,6 +1,6 @@
 services:
   lnd1:
-    image: lightninglabs/lnd:v0.18.0-beta.2
+    image: lightninglabs/lnd:v0.18.3-beta.rc1
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -73,7 +73,7 @@ services:
       - "ldknode1:/root/.ldknode"
 
   lnd2:
-    image: lightninglabs/lnd:v0.18.0-beta.2
+    image: lightninglabs/lnd:v0.18.3-beta.rc1
     restart: unless-stopped
     depends_on:
       - bitcoind
