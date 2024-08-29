@@ -385,8 +385,8 @@ waitForGraphSync() {
 }
 
 restartLndkNodes() {
-  docker-compose restart lndk1
-  docker-compose restart lndk2
+  docker compose restart lndk1
+  docker compose restart lndk2
 
   echo "LNDK nodes restarted successfully."
 }
